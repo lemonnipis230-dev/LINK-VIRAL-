@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LOADING...</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            background: black;
+            color: red;
+            font-family: Arial, sans-serif;
+            touch-action: none;
+        }
+        #container {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            text-align: center;
+            animation: blink 0.3s infinite alternate;
+        }
+        h1 {
+            font-size: 3rem;
+            margin: 0;
+            text-shadow: 0 0 20px red;
+        }
+        p {
+            font-size: 1.5rem;
+            margin: 20px;
+        }
+        @keyframes blink {
+            from { opacity: 0.3; background: #110000; }
+            to   { opacity: 1; background: #330000; }
+        }
+        .overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(255,0,0,0.1);
+            pointer-events: none;
+            animation: flash 0.1s infinite alternate;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+
+<div id="container">
+    <h1>⚠️ TERJEBAK ⚠️</h1>
+    <p>Sabar... Tunggu 5 detik</p>
+    <p id="countdown">5</p>
+</div>
+
+<div class="overlay"></div>
+
+<script>
+// Fullscreen paksa
+function goFullscreen() {
+    const elem = document.documentElement;
+    if (elem.requestFullscreen) elem.requestFullscreen();
+    else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    else if (elem.msRequestFullscreen) elem.msRequestFullscreen();
+}
+
+// Cegah keluar sebisa mungkin
+function trapUser() {
+    window.onbeforeunload = function() {
+        return "Kamu tidak bisa keluar!";
+    };
+    
+    document.addEventListener('backbutton', function(e) {
+        e.preventDefault();
+        return false;
+    }, false);
+}
+
+// Mulai efek
+setTimeout(() => {
+    goFullscreen();
+    trapUser();
+    
+    document.getElementById('container').innerHTML = `
+        <h1>😈 KAMU TERJEBAK 😈</h1>
+        <p>HP ini sudah milikku sekarang</p>
+        <p style="color:yellow;">Coba saja keluar kalau berani 🔥</p>
+    `;
+    
+    // Kelap-kelip super cepat
+    setInterval(() => {
+        document.body.style.background = (document.body.style.background === 'black') ? 'red' : 'black';
+    }, 80);
+    
+}, 5000);
+
+// Countdown
+let time = 5;
+const countdownEl = document.getElementById('countdown');
+const timer = setInterval(() => {
+    time--;
+    countdownEl.textContent = time;
+    if (time <= 0) clearInterval(timer);
+}, 1000);
+
+// Cegah zoom & gesture
+document.addEventListener('gesturestart', function(e) {
+    e.preventDefault();
+});
+document.addEventListener('touchmove', function(e) {
+    if (e.scale !== 1) e.preventDefault();
+}, { passive: false });
+
+// Klik mana saja tetap di sini
+document.addEventListener('click', () => {
+    goFullscreen();
+});
+</script>
+
+</body>
+</html>
